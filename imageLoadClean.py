@@ -23,6 +23,6 @@ def load2whiteblack(img_path):
 
     else:
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        ret, img_white_black = cv2.threshold(img_gray, 200, 255, cv2.IMREAD_GRAYSCALE)
+        ret, img_white_black = cv2.threshold(img_gray, 230, 255, cv2.IMREAD_GRAYSCALE)
         return img_white_black
 

@@ -11,8 +11,37 @@ def rgba2rgb(rgba_img_numpy):
     c=a + b[:,:,None]
     return c
 
+# https://stackoverflow.com/questions/30716610/how-to-get-pixel-coordinates-from-feature-matching-in-opencv-python
+def matchCoordinates(matches,kp1,kp2):
+    # Initialize lists
+    list_kp1 = []
+    list_kp2 = []
 
-img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_UNCHANGED)
+    # For each match...
+    for mat in matches:
+
+        # Get the matching keypoints for each of the images
+        img1_idx = mat.queryIdx
+        img2_idx = mat.trainIdx
+
+        # x - columns
+        # y - rows
+        # Get the coordinates
+        (x1, y1) = kp1[img1_idx].pt
+        (x2, y2) = kp2[img2_idx].pt
+
+        # Append to each list
+        # list_kp1 will contain the spatial coordinates of a feature point that matched with the corresponding
+        #  position in list_kp2. In other words, element i of list_kp1 contains the spatial coordinates of the 
+        # feature point from img1 that matched with the corresponding feature point from img2 in list_kp2 whose 
+        # spatial coordinates are in element i.
+
+        list_kp1.append((x1, y1))
+        list_kp2.append((x2, y2))
+    return list_kp1, list_kp2
+
+
+img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_UNCHANGED) # IMREAD_UNCHANGED for PNG file to count transparency layer
 img2 = cv2.imread(cv2.samples.findFile("./resources/geetestplan.jpeg"), cv2.IMREAD_GRAYSCALE)
 img1 = rgba2rgb(img1)
 

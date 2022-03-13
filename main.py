@@ -1,11 +1,23 @@
 import cv2
 import numpy as np
+from PIL import Image
+import os.path 
 
-img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_GRAYSCALE)
+
+def rgba2rgb(rgba_img_numpy):
+    print("RGBA_imag_numpy shape: ",rgba_img_numpy.shape)
+    a=rgba_img_numpy[:,:,0:3]
+    b=rgba_img_numpy[:,:,3]
+    c=a + b[:,:,None]
+    return c
+
+
+img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_UNCHANGED)
 img2 = cv2.imread(cv2.samples.findFile("./resources/geetestplan.jpeg"), cv2.IMREAD_GRAYSCALE)
+img1 = rgba2rgb(img1)
 
 # Threshold both images first before using cv2.findContours
-img1 = np.invert(img1)
+# img1 = np.invert(img1)
 ret, img2 = cv2.threshold(img2, 200, 255, 0)
 
 if img1 is None or img2 is None:

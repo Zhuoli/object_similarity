@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
-def getContours(img_white_black, idx=-1):
+def getContours(img_white_black):
     # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga819779b9857cc2f8601e6526a3a5bc71
     # RETR_CCOMP: retrieves all of the contours and organizes them into a two-level hierarchy.
     #  At the top level, there are external boundaries of the components. 

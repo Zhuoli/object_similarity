@@ -1,8 +1,8 @@
 # object_similarity
 
-method geetest is the entrypoint API for geetest
-# input: target object image path, select panel image path
-# return: central pixel coordination to click on
+## method **geetest** in main.py is the entrypoint API for geetest
+* input: target object image path, select panel image path
+* return: central pixel coordination to click on
 
 ## Install dependency:
 $pip install -r requirements.txt

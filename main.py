@@ -40,9 +40,12 @@ def matchCoordinates(matches,kp1,kp2):
         list_kp2.append((x2, y2))
     return list_kp1, list_kp2
 
+dir="testcase3"
+img1_path="./resources/"+dir + "/geetestObj3.png"
+img2_path="./resources/"+dir + "/geetestplan.jpeg"
 
-img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_UNCHANGED) # IMREAD_UNCHANGED for PNG file to count transparency layer
-img2 = cv2.imread(cv2.samples.findFile("./resources/geetestplan.jpeg"), cv2.IMREAD_GRAYSCALE)
+img1 = cv2.imread(cv2.samples.findFile(img1_path), cv2.IMREAD_UNCHANGED) # IMREAD_UNCHANGED for PNG file to count transparency layer
+img2 = cv2.imread(cv2.samples.findFile(img2_path), cv2.IMREAD_GRAYSCALE)
 img1 = rgba2rgb(img1)
 
 # Threshold both images first before using cv2.findContours
@@ -62,7 +65,7 @@ keypoints2, descriptors2 = detector.detectAndCompute(img2, None)
 matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
 knn_matches = matcher.knnMatch(descriptors1, descriptors2, 2)
 #-- Filter matches using the Lowe's ratio test
-ratio_thresh = 0.8
+ratio_thresh = 0.5
 good_matches = []
 for m,n in knn_matches:
     if m.distance < ratio_thresh * n.distance:

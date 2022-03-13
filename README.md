@@ -1,4 +1,10 @@
 # object_similarity
 
+Required Packages:
+* CMake 3.9 or higher
+* Git
+* Python 2.7 or later and Numpy 1.5 or later
+
 ### Reference
-1. [Converting an image to black and white](https://techtutorialsx.com/2019/04/13/python-opencv-converting-image-to-black-and-white/)
+1. OpenCV C++ Tutorial: https://docs.opencv.org/3.4/d0/db2/tutorial_macos_install.html
+

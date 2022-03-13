@@ -23,6 +23,6 @@ def contourMatch(target_countours, contours_list):
         ret = cv2.matchShapes(target_countours,contours_list[k],1,0.0)
         if ret <score:
             score = ret
-            ct = ret
+            ct = contours_list[k]
             idx=k
     return idx, ct

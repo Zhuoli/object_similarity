@@ -1,44 +1,35 @@
 import cv2
 import numpy as np
 
-# Load the shape template or reference image
-template = cv2.imread('resources/geetestObj3.png',0)
-cv2.imshow('Template', template)
-cv2.waitKey()
-
-# Load the target image with the shapes we're trying to match
-target = cv2.imread('resources/geetestplan.jpeg')
-target_gray = cv2.cvtColor(target,cv2.COLOR_BGR2GRAY)
+img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_GRAYSCALE)
+img2 = cv2.imread(cv2.samples.findFile("./resources/geetestplan.jpeg"), cv2.IMREAD_GRAYSCALE)
 
 # Threshold both images first before using cv2.findContours
-ret, thresh1 = cv2.threshold(template, 127, 255, 0)
-ret, thresh2 = cv2.threshold(target_gray, 127, 255, 0)
+img1 = np.invert(img1)
+ret, img2 = cv2.threshold(img2, 200, 255, 0)
 
-# Find contours in template
-contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-
-# We need to sort the contours by area so that we can remove the largest
-# contour which is the image outline
-sorted_contours = sorted(contours, key=cv2.contourArea, reverse=True)
-
-# We extract the second largest contour which will be our template contour
-template_contour = contours[1]
-
-# Extract contours from second target image
-contours, hierarchy = cv2.findContours(thresh2, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-
-for c in contours:
-    # Iterate through each contour in the target image and 
-    # use cv2.matchShapes to compare contour shapes
-    match = cv2.matchShapes(template_contour, c, 1, 0.0)
-    print(match)
-    # If the match value is less than 0.15 we
-    if match < 0.15:
-        closest_contour = c
-    else:
-        closest_contour = [] 
-                
-cv2.drawContours(target, [closest_contour], -1, (0,255,0), 3)
-cv2.imshow('Output', target)
+if img1 is None or img2 is None:
+    print('Could not open or find the images!')
+    exit(0)
+#-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+minHessian = 400
+detector = cv2.SIFT_create(edgeThreshold=10)
+keypoints1, descriptors1 = detector.detectAndCompute(img1, None)
+keypoints2, descriptors2 = detector.detectAndCompute(img2, None)
+#-- Step 2: Matching descriptor vectors with a FLANN based matcher
+# Since SURF is a floating-point descriptor NORM_L2 is used
+matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
+knn_matches = matcher.knnMatch(descriptors1, descriptors2, 2)
+#-- Filter matches using the Lowe's ratio test
+ratio_thresh = 0.8
+good_matches = []
+for m,n in knn_matches:
+    if m.distance < ratio_thresh * n.distance:
+        good_matches.append(m)
+#-- Draw matches
+img_matches = np.empty((max(img1.shape[0], img2.shape[0]), img1.shape[1]+img2.shape[1], 3), dtype=np.uint8)
+cv2.drawMatches(img1, keypoints1, img2, keypoints2, good_matches, img_matches, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+#-- Show detected matches
+print("Found matches size: ", len(img_matches))
+cv2.imshow('Good Matches', img_matches)
 cv2.waitKey()
-cv2.destroyAllWindows()

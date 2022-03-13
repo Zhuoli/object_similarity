@@ -11,66 +11,66 @@ def rgba2rgb(rgba_img_numpy):
     c=a + b[:,:,None]
     return c
 
-# https://stackoverflow.com/questions/30716610/how-to-get-pixel-coordinates-from-feature-matching-in-opencv-python
-def matchCoordinates(matches,kp1,kp2):
-    # Initialize lists
-    list_kp1 = []
-    list_kp2 = []
 
-    # For each match...
-    for mat in matches:
+# https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
+def getContours(img_white_black, idx=-1):
+    # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga819779b9857cc2f8601e6526a3a5bc71
+    # RETR_CCOMP: retrieves all of the contours and organizes them into a two-level hierarchy.
+    #  At the top level, there are external boundaries of the components. 
+    # At the second level, there are boundaries of the holes. 
+    # If there is another contour inside a hole of a connected component, it is still put at the top level.
 
-        # Get the matching keypoints for each of the images
-        img1_idx = mat.queryIdx
-        img2_idx = mat.trainIdx
-
-        # x - columns
-        # y - rows
-        # Get the coordinates
-        (x1, y1) = kp1[img1_idx].pt
-        (x2, y2) = kp2[img2_idx].pt
-
-        # Append to each list
-        # list_kp1 will contain the spatial coordinates of a feature point that matched with the corresponding
-        #  position in list_kp2. In other words, element i of list_kp1 contains the spatial coordinates of the 
-        # feature point from img1 that matched with the corresponding feature point from img2 in list_kp2 whose 
-        # spatial coordinates are in element i.
-
-        list_kp1.append((x1, y1))
-        list_kp2.append((x2, y2))
-    return list_kp1, list_kp2
+    # hierarchy + cv2.RETR_TREE can tell you parent-child relationship between contours:
+    # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
+    contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    result_imag = np.empty((img_white_black.shape[0],img_white_black.shape[1], 3), dtype=np.uint8)
+    cv2.drawContours(result_imag, contours, -1, (0,255,0), 3)
+    return result_imag,contours
 
 
 img1 = cv2.imread(cv2.samples.findFile("./resources/geetestObj3.png"), cv2.IMREAD_UNCHANGED) # IMREAD_UNCHANGED for PNG file to count transparency layer
-img2 = cv2.imread(cv2.samples.findFile("./resources/geetestplan.jpeg"), cv2.IMREAD_GRAYSCALE)
 img1 = rgba2rgb(img1)
 
-# Threshold both images first before using cv2.findContours
-# img1 = np.invert(img1)
-ret, img2 = cv2.threshold(img2, 200, 255, 0)
+img2 = cv2.imread("./resources/geetestplan.jpeg")
+img2_gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+ret, img2_white_black = cv2.threshold(img2_gray, 200, 255, cv2.IMREAD_GRAYSCALE)
 
-if img1 is None or img2 is None:
-    print('Could not open or find the images!')
-    exit(0)
-#-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
-minHessian = 400
-detector = cv2.SIFT_create(edgeThreshold=10)
-keypoints1, descriptors1 = detector.detectAndCompute(img1, None)
-keypoints2, descriptors2 = detector.detectAndCompute(img2, None)
-#-- Step 2: Matching descriptor vectors with a FLANN based matcher
-# Since SURF is a floating-point descriptor NORM_L2 is used
-matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
-knn_matches = matcher.knnMatch(descriptors1, descriptors2, 2)
-#-- Filter matches using the Lowe's ratio test
-ratio_thresh = 0.8
-good_matches = []
-for m,n in knn_matches:
-    if m.distance < ratio_thresh * n.distance:
-        good_matches.append(m)
-#-- Draw matches
-img_matches = np.empty((max(img1.shape[0], img2.shape[0]), img1.shape[1]+img2.shape[1], 3), dtype=np.uint8)
-cv2.drawMatches(img1, keypoints1, img2, keypoints2, good_matches, img_matches, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-#-- Show detected matches
-print("Found matches size: ", len(img_matches))
-cv2.imshow('Good Matches', img_matches)
-cv2.waitKey()
+cv2.imshow('img2_white_black',img2_white_black)
+c = cv2.waitKey()
+
+result_imag2,contours2=getContours(img2_white_black)
+cv2.imshow('image2',result_imag2)
+c = cv2.waitKey()
+
+
+
+img1_gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+ret, img1_white_black = cv2.threshold(img1_gray, 200, 255, cv2.IMREAD_GRAYSCALE)
+cv2.imshow('img1_white_black',img1_white_black)
+c = cv2.waitKey()
+
+result_imag1,contours1=getContours(img1_white_black,idx=2)
+cv2.imshow('image1',result_imag1)
+c = cv2.waitKey()
+
+print("contours1 shape has size: ", len(contours1))
+print("contours2 shape has size: ", len(contours2))
+
+for i in range(len(contours1)):
+    score,ct=1,None
+    for k in range(len(contours2)):
+        ret = cv2.matchShapes(contours1[i],contours2[k],1,0.0)
+        if ret <score:
+            score = ret
+            ct = ret
+    print("find c1 matchs c2  i: ", i, ' k: ',k)
+    result_imag1 = np.empty((img1_white_black.shape[0],img1_white_black.shape[1], 3), dtype=np.uint8)
+    cv2.drawContours(result_imag1, contours1, i, (0,255,0), 3)
+    cv2.imshow('result_imag1',result_imag1)
+    c = cv2.waitKey()
+
+    result_imag2 = np.empty((img2_white_black.shape[0],img2_white_black.shape[1], 3), dtype=np.uint8)
+    cv2.drawContours(result_imag2, contours2, i, (0,255,0), 3)
+    cv2.imshow('result_imag2',result_imag2)
+    c = cv2.waitKey()
+# match shapes: https://docs.opencv.org/4.x/d5/d45/tutorial_py_contours_more_functions.html#:~:text=OpenCV%20comes%20with%20a%20function,on%20the%20hu%2Dmoment%20values.

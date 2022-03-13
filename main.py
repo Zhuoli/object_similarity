@@ -35,6 +35,7 @@ def debug_method(x,y,target_shape_white_black,target_shape_contours,input_white_
     ## --------- DONE ------------ ##
 
 # API entry point
+# path can be local file path or url path
 def geetest(target_object_image_path, select_panel_image_path, debug=False):
     target_shape_white_black = load2whiteblack(target_object_image_path)
     input_white_black = load2whiteblack(select_panel_image_path)
@@ -49,9 +50,10 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
     return (x,y)
 
 
-(x,y) = geetest("./resources/geetestObj2.png","./resources/geetestplan.jpeg", debug=True )
+(x,y) = geetest("https://static.geetest.com/nerualpic/original_icon_pic/icon_20201215/application-one.png","https://static.geetest.com/nerualpic/v4_pic/click_2021_06_16/icon/b8c789ae5a884e69a2926835aa895ede.jpg", debug=True )
 print('Pls click at x: ', x, ' y: ',y)
 
+#img_np = readFromUrl('https://static.geetest.com/nerualpic/v4_pic/click_2021_06_16/icon/b8c789ae5a884e69a2926835aa895ede.jpg')
 
 
 

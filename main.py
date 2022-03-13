@@ -49,7 +49,7 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
     return (x,y)
 
 
-(x,y) = geetest("./resources/geetestObj3.png","./resources/geetestplan.jpeg", debug=True )
+(x,y) = geetest("./resources/geetestObj2.png","./resources/geetestplan.jpeg", debug=True )
 print('Pls click at x: ', x, ' y: ',y)
 
 

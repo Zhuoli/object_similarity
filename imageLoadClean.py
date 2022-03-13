@@ -19,3 +19,7 @@ def load2whiteblack(img_path):
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, img_white_black = cv2.threshold(img_gray, 200, 255, cv2.IMREAD_GRAYSCALE)
         return img_white_black
+
+# ref: https://stackoverflow.com/questions/21061814/how-can-i-read-an-image-from-an-internet-url-in-python-cv2-scikit-image-and-mah
+def readFromUrl():
+    pass

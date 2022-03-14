@@ -80,26 +80,23 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
     for c in list_contours:
         single_contour.extend(c) 
     single_contour = np.array(single_contour)
-    print('target single contour shape: ', single_contour.shape)
     target_fps, select_panel_fps = feature_match(target_shape_white_black, input_white_black)
     select_panel_ct_center_pts = cal_center_pt(input_shape_contours)
     contour_circle_radius=35
 
     best_matched_contour_idx = tell_me_which_contour_has_most_feature_pts(select_panel_ct_center_pts,contour_circle_radius,select_panel_fps)
-    best_matched_contour = input_shape_contours[best_matched_contour_idx]
+    x,y = select_panel_ct_center_pts[best_matched_contour_idx]
 
-    imput_image_circle = np.zeros((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
-    cv2.drawContours(imput_image_circle, input_shape_contours, -1, (255,0,0), 3)
-    draw_circle(imput_image_circle, select_panel_ct_center_pts[:best_matched_contour_idx]+select_panel_ct_center_pts[best_matched_contour_idx+1:], contour_circle_radius, color=[0,0,255])
-    draw_circle(imput_image_circle, [select_panel_ct_center_pts[best_matched_contour_idx]], contour_circle_radius, color=[0,255,0])
-    draw_circle(imput_image_circle, select_panel_fps, 2,(244,244,244), -1)
-    # Displaying the image
-    cv2.imshow("Circled panel", imput_image_circle)
-    c = cv2.waitKey()
+    if debug:
+        imput_image_circle = np.zeros((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
+        cv2.drawContours(imput_image_circle, input_shape_contours, -1, (255,0,0), 3)
+        draw_circle(imput_image_circle, select_panel_ct_center_pts[:best_matched_contour_idx]+select_panel_ct_center_pts[best_matched_contour_idx+1:], contour_circle_radius, color=[0,0,255])
+        draw_circle(imput_image_circle, [(x,y)], contour_circle_radius, color=[0,255,0])
+        draw_circle(imput_image_circle, select_panel_fps, 2,(244,244,244), -1)
+        # Displaying the image
+        cv2.imshow("Circled panel", imput_image_circle)
+        c = cv2.waitKey()
 
-    central_point_pixel = np.mean(best_matched_contour, axis=0)
-    x = int(central_point_pixel[0][0])
-    y = int(central_point_pixel[0][1])
     if debug:
         debug_method(
             x=x,
@@ -118,7 +115,7 @@ target_obj_path="./resources/"+dir + "/geetestObj1.png"
 
 #feature_match(load2whiteblack(target_obj_path), load2whiteblack(select_panel_path), True)
 t_start = time.time()
-(x,y) = geetest(target_obj_path, select_panel_path, debug=True )
+(x,y) = geetest(target_obj_path, select_panel_path, debug=False )
 t_end = time.time()
 print('Pls click at x: ', x, ' y: ',y)
 print('Time cost in second : ', t_end - t_start)

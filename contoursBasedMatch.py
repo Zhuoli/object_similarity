@@ -60,6 +60,7 @@ def getContours(img_white_black):
     # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
     contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     contours = combine_contours(contours)
+    contours = [c for c in contours if c.shape[0]>10]
     return contours
 
 # retrun best matched contours and index of it in contours_list

@@ -88,7 +88,7 @@ dir="testcase2"
 img1_path="./resources/"+dir + "/geetestplan.jpeg"
 img2_path="./resources/"+dir + "/geetestObj2.png"
 t_start = time.time()
-(x,y) = geetest(img2_path, img1_path, debug=True )
+(x,y) = geetest(img2_path, img1_path, debug=False )
 t_end = time.time()
 print('Pls click at x: ', x, ' y: ',y)
 print('Time cost in second : ', t_end - t_start)

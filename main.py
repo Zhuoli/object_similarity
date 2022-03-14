@@ -30,13 +30,13 @@ def debug_method(x,y,target_shape_white_black,target_shape_contour,input_white_b
             input_white_black.shape[1],
             input_shape_contours,
             i,
-            title="Select panel contours"
+            title="Select panel contour " + str(i)
         )
-    print("target_shape_contour shape has size: ", len(target_shape_contour))
+    print("target_shape_contour shape has size: ", len(target_shape_contour), ' shape ', target_shape_contour.shape)
     print("best_matched_contour_idx shape has size: ", len(input_shape_contours[best_matched_contour_idx]))
     imput_image_new = np.empty((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
     cv2.drawContours(imput_image_new, input_shape_contours, best_matched_contour_idx, (0,255,0), 3)
-    cv2.imshow('Best match object',imput_image_new)
+    cv2.imshow('Best match object at idx '+str(best_matched_contour_idx),imput_image_new)
     c = cv2.waitKey()
     print("Central point pixel is: ", (x,y))
 
@@ -62,7 +62,14 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
     input_white_black = load2whiteblack(select_panel_image_path)
     result_target_shape_img,target_shape_contours=getContours(target_shape_white_black)
     result_imag2,input_shape_contours=getContours(input_white_black)
-    best_matched_contour_idx, best_matched_contour = contourMatch(target_shape_contours[0],input_shape_contours)
+ 
+    list_contours = list(target_shape_contours)
+    single_contour = []
+    for c in list_contours:
+        single_contour.extend(c) 
+    single_contour = np.array(single_contour)
+    print('target single contour shape: ', single_contour.shape)
+    best_matched_contour_idx, best_matched_contour = contourMatch(single_contour,input_shape_contours)
     central_point_pixel = np.mean(best_matched_contour, axis=0)
     x = int(central_point_pixel[0][0])
     y = int(central_point_pixel[0][1])
@@ -71,7 +78,7 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
             x=x,
             y=y,
             target_shape_white_black=target_shape_white_black,
-            target_shape_contour=target_shape_contours[0],
+            target_shape_contour=single_contour,
             input_white_black=input_white_black,
             input_shape_contours=input_shape_contours,
             best_matched_contour_idx=best_matched_contour_idx)

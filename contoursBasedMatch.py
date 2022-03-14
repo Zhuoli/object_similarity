@@ -11,9 +11,8 @@ def getContours(img_white_black):
 
     # hierarchy + cv2.RETR_TREE can tell you parent-child relationship between contours:
     # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
-    contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     result_imag = np.empty((img_white_black.shape[0],img_white_black.shape[1], 3), dtype=np.uint8)
-    cv2.drawContours(result_imag, contours, -1, (0,255,0), 3)
     return result_imag,contours
 
 # retrun best matched contours and index of it in contours_list

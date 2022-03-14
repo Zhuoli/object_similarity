@@ -19,17 +19,7 @@ def merge_contours(list_contours):
     single_contour = np.array(single_contour)
     return single_contour
 
-# https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
-def getContours(img_white_black):
-    # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga819779b9857cc2f8601e6526a3a5bc71
-    # RETR_CCOMP: retrieves all of the contours and organizes them into a two-level hierarchy.
-    #  At the top level, there are external boundaries of the components. 
-    # At the second level, there are boundaries of the holes. 
-    # If there is another contour inside a hole of a connected component, it is still put at the top level.
-
-    # hierarchy + cv2.RETR_TREE can tell you parent-child relationship between contours:
-    # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
-    contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+def combine_contours(contours):
     n = len(contours)
     ct_idx_to_merge={} # key is index, value is root picture current index can merge too
     for i in range(n):
@@ -58,6 +48,19 @@ def getContours(img_white_black):
 
     print("combined_contours size: ", len(result))
     return result
+# https://medium.com/analytics-vidhya/opencv-findcontours-detailed-guide-692ee19eeb18
+def getContours(img_white_black):
+    # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga819779b9857cc2f8601e6526a3a5bc71
+    # RETR_CCOMP: retrieves all of the contours and organizes them into a two-level hierarchy.
+    #  At the top level, there are external boundaries of the components. 
+    # At the second level, there are boundaries of the holes. 
+    # If there is another contour inside a hole of a connected component, it is still put at the top level.
+
+    # hierarchy + cv2.RETR_TREE can tell you parent-child relationship between contours:
+    # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
+    contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours = combine_contours(contours)
+    return contours
 
 # retrun best matched contours and index of it in contours_list
 def contourMatch(target_countours, contours_list):

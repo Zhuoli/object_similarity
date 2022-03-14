@@ -1,7 +1,9 @@
+import imp
 import cv2
 import numpy as np
 from contoursBasedMatch import getContours
 from contoursBasedMatch import contourMatch
+from contoursBasedMatch import merge_contours
 from imageLoadClean import load2whiteblack
 from feature_match import feature_match
 import time
@@ -64,11 +66,7 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
     target_shape_contours=getContours(target_shape_white_black)
     input_shape_contours=getContours(input_white_black)
  
-    list_contours = list(target_shape_contours)
-    single_contour = []
-    for c in list_contours:
-        single_contour.extend(c) 
-    single_contour = np.array(single_contour)
+    single_contour = merge_contours(list(target_shape_contours))
     print('target single contour shape: ', single_contour.shape)
     best_matched_contour_idx, best_matched_contour = contourMatch(single_contour,input_shape_contours)
     central_point_pixel = np.mean(best_matched_contour, axis=0)
@@ -85,18 +83,18 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
             best_matched_contour_idx=best_matched_contour_idx)
     return (x,y)
 
-dir="testcase1"
+dir="testcase4"
 img1_path="./resources/"+dir + "/geetestplan.jpeg"
 img2_path="./resources/"+dir + "/geetestObj1.png"
 
 target_shape_white_black = load2whiteblack(img2_path)
 input_white_black = load2whiteblack(img1_path)
-feature_match(target_shape_white_black,input_white_black)
-# t_start = time.time()
-# (x,y) = geetest(img2_path, img1_path, debug=False )
-# t_end = time.time()
-# print('Pls click at x: ', x, ' y: ',y)
-# print('Time cost in second : ', t_end - t_start)
+# feature_match(target_shape_white_black,input_white_black)
+t_start = time.time()
+(x,y) = geetest(img2_path, img1_path, debug=True )
+t_end = time.time()
+print('Pls click at x: ', x, ' y: ',y)
+print('Time cost in second : ', t_end - t_start)
 
 #img_np = readFromUrl('https://static.geetest.com/nerualpic/v4_pic/click_2021_06_16/icon/b8c789ae5a884e69a2926835aa895ede.jpg')
 

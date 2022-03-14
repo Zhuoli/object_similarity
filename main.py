@@ -3,6 +3,7 @@ import numpy as np
 from contoursBasedMatch import getContours
 from contoursBasedMatch import contourMatch
 from imageLoadClean import load2whiteblack
+from feature_match import feature_match
 import time
 
 def display_np(img_np, title="default"):
@@ -84,14 +85,18 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
             best_matched_contour_idx=best_matched_contour_idx)
     return (x,y)
 
-dir="testcase2"
+dir="testcase1"
 img1_path="./resources/"+dir + "/geetestplan.jpeg"
-img2_path="./resources/"+dir + "/geetestObj2.png"
-t_start = time.time()
-(x,y) = geetest(img2_path, img1_path, debug=False )
-t_end = time.time()
-print('Pls click at x: ', x, ' y: ',y)
-print('Time cost in second : ', t_end - t_start)
+img2_path="./resources/"+dir + "/geetestObj1.png"
+
+target_shape_white_black = load2whiteblack(img2_path)
+input_white_black = load2whiteblack(img1_path)
+feature_match(target_shape_white_black,input_white_black)
+# t_start = time.time()
+# (x,y) = geetest(img2_path, img1_path, debug=False )
+# t_end = time.time()
+# print('Pls click at x: ', x, ' y: ',y)
+# print('Time cost in second : ', t_end - t_start)
 
 #img_np = readFromUrl('https://static.geetest.com/nerualpic/v4_pic/click_2021_06_16/icon/b8c789ae5a884e69a2926835aa895ede.jpg')
 

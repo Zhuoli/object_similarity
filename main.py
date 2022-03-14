@@ -4,6 +4,7 @@ from contoursBasedMatch import getContours
 from contoursBasedMatch import contourMatch
 from imageLoadClean import load2whiteblack
 from feature_match import feature_match
+from feature_match import cal_best_match
 import time
 
 def display_np(img_np, title="default"):
@@ -70,7 +71,8 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
         single_contour.extend(c) 
     single_contour = np.array(single_contour)
     print('target single contour shape: ', single_contour.shape)
-    best_matched_contour_idx, best_matched_contour = contourMatch(single_contour,input_shape_contours)
+    target_fps, select_panel_fps = feature_match(target_shape_white_black, input_shape_contours)
+    best_matched_contour_idx, best_matched_contour = cal_best_match(target_fps, input_shape_contours)
     central_point_pixel = np.mean(best_matched_contour, axis=0)
     x = int(central_point_pixel[0][0])
     y = int(central_point_pixel[0][1])
@@ -85,13 +87,12 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
             best_matched_contour_idx=best_matched_contour_idx)
     return (x,y)
 
-dir="testcase1"
-img1_path="./resources/"+dir + "/geetestplan.jpeg"
-img2_path="./resources/"+dir + "/geetestObj1.png"
+dir="testcase2"
+select_panel_path="./resources/"+dir + "/geetestplan.jpeg"
+target_obj_path="./resources/"+dir + "/geetestObj2.png"
 
-target_shape_white_black = load2whiteblack(img2_path)
-input_white_black = load2whiteblack(img1_path)
-feature_match(target_shape_white_black,input_white_black)
+
+feature_match(load2whiteblack(target_obj_path), load2whiteblack(select_panel_path))
 # t_start = time.time()
 # (x,y) = geetest(img2_path, img1_path, debug=False )
 # t_end = time.time()

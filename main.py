@@ -9,7 +9,7 @@ def display_np(img_np, title="default"):
     cv2.imshow(title,img_np)
     c = cv2.waitKey()
 def display_contour(panel_widht,panel_height,contour_list, contour_idx, title="default"):
-    contour_np = np.empty((panel_widht,panel_height, 3), dtype=np.uint8)
+    contour_np = np.zeros((panel_widht,panel_height, 3), dtype=np.uint8)
     cv2.drawContours(contour_np, contour_list, contour_idx, (0,255,0), 3)
     cv2.imshow(title,contour_np)
     c = cv2.waitKey()
@@ -34,13 +34,13 @@ def debug_method(x,y,target_shape_white_black,target_shape_contour,input_white_b
         )
     print("target_shape_contour shape has size: ", len(target_shape_contour), ' shape ', target_shape_contour.shape)
     print("best_matched_contour_idx shape has size: ", len(input_shape_contours[best_matched_contour_idx]))
-    imput_image_new = np.empty((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
+    imput_image_new = np.zeros((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
     cv2.drawContours(imput_image_new, input_shape_contours, best_matched_contour_idx, (0,255,0), 3)
     cv2.imshow('Best match object at idx '+str(best_matched_contour_idx),imput_image_new)
     c = cv2.waitKey()
     print("Central point pixel is: ", (x,y))
 
-    imput_image_circle = np.empty((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
+    imput_image_circle = np.zeros((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
     # Radius of circle
     radius = 10
     # Red color in BGR
@@ -60,8 +60,8 @@ def debug_method(x,y,target_shape_white_black,target_shape_contour,input_white_b
 def geetest(target_object_image_path, select_panel_image_path, debug=False):
     target_shape_white_black = load2whiteblack(target_object_image_path)
     input_white_black = load2whiteblack(select_panel_image_path)
-    result_target_shape_img,target_shape_contours=getContours(target_shape_white_black)
-    result_imag2,input_shape_contours=getContours(input_white_black)
+    target_shape_contours=getContours(target_shape_white_black)
+    input_shape_contours=getContours(input_white_black)
  
     list_contours = list(target_shape_contours)
     single_contour = []
@@ -84,7 +84,7 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
             best_matched_contour_idx=best_matched_contour_idx)
     return (x,y)
 
-dir="testcase3"
+dir="testcase2"
 img1_path="./resources/"+dir + "/geetestplan.jpeg"
 img2_path="./resources/"+dir + "/geetestObj2.png"
 t_start = time.time()

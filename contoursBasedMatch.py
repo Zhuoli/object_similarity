@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import math
 
 #
 def contours_close(cnt1,cnt2):
@@ -60,7 +61,7 @@ def getContours(img_white_black):
     # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
     contours, hierarchy= cv2.findContours(img_white_black, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     contours = combine_contours(contours)
-    contours = [c for c in contours if c.shape[0]>10]
+    contours = [c for c in contours if c.shape[0]>30]
     return contours
 
 # retrun best matched contours and index of it in contours_list
@@ -73,3 +74,28 @@ def contourMatch(target_countours, contours_list):
             ct = contours_list[k]
             idx=k
     return idx, ct
+
+def cal_center_pt(contours_list):
+    result=[]
+    for ct in contours_list:
+        central_point_pixel = np.mean(ct, axis=0)
+        x = int(central_point_pixel[0][0])
+        y = int(central_point_pixel[0][1])
+        result.append((x,y))
+    return result
+
+def tell_me_which_contour_has_most_feature_pts(select_panel_ct_center_pts,contour_circle_radius,select_panel_fp):
+    ct_pt_count={}
+    for i in range(len(select_panel_ct_center_pts)):
+        for feature_point in select_panel_fp:
+            if math.dist(select_panel_ct_center_pts[i], feature_point)<=contour_circle_radius:
+                if i not in ct_pt_count:
+                    ct_pt_count[i]=[]
+                ct_pt_count[i].append(feature_point)
+    max_count = 0
+    max_idx=-1
+    for key in ct_pt_count.keys():
+        if len(ct_pt_count[key])>max_count:
+            max_count=len(ct_pt_count[key])
+            max_idx=key
+    return max_idx

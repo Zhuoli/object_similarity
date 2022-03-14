@@ -19,7 +19,7 @@ def load2whiteblack(img_path):
     if img_path.strip().endswith(".png"):
         img = rgba2rgb(img)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ret, img_white_black = cv2.threshold(img_gray, 230, 255, cv2.IMREAD_GRAYSCALE)
+    ret, img_white_black = cv2.threshold(img_gray, 240, 255, cv2.IMREAD_GRAYSCALE)
 
     # 进行开运算操作
     # clean noise: https://zhuanlan.zhihu.com/p/36433309

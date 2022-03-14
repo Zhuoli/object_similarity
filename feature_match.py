@@ -21,9 +21,9 @@ def get_point_maps(kp1, kp2, matches):
         (x2, y2) = kp2[img2_idx].pt
 
         # Append to each list
-        list_kp1.append((x1, y1))
-        list_kp2.append((x2, y2))
-    return list_kp1, list_kp1
+        list_kp1.append((int(x1), int(y1)))
+        list_kp2.append((int(x2), int(y2)))
+    return list_kp1, list_kp2
 
 def feature_match(img1, img2, debug=False):
     #-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
@@ -42,7 +42,7 @@ def feature_match(img1, img2, debug=False):
         if m.distance < ratio_thresh * n.distance:
             good_matches.append(m)
     kp1_list,kp2_list = get_point_maps(keypoints1,keypoints2, good_matches)
-    print("Found good match points size: ", len(kp1_list))
+    print("Found good match points size: ", len(kp2_list))
     if debug:
         #-- Draw matches
         img_matches = np.empty((max(img1.shape[0], img2.shape[0]), img1.shape[1]+img2.shape[1], 3), dtype=np.uint8)

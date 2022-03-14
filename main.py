@@ -28,14 +28,14 @@ def draw_circle(imput_image_circle, tps,radius, color=(0, 0, 255),thickness=2):
 
 def debug_method(x,y,target_shape_white_black,target_shape_contour,input_white_black,input_shape_contours,best_matched_contour_idx ):
     display_np(target_shape_white_black, 'target object')
-    display_np(input_white_black, 'select panel')
-    display_contour(
-        target_shape_white_black.shape[0],
-        target_shape_white_black.shape[1],
-        [target_shape_contour], 
-        0, 
-        title="Target object contour"
-    )
+    # display_np(input_white_black, 'select panel')
+    # display_contour(
+    #     target_shape_white_black.shape[0],
+    #     target_shape_white_black.shape[1],
+    #     [target_shape_contour], 
+    #     0, 
+    #     title="Target object contour"
+    # )
     # for i in range(len(input_shape_contours)):
     #     display_contour(
     #         input_white_black.shape[0],
@@ -62,8 +62,8 @@ def debug_method(x,y,target_shape_white_black,target_shape_contour,input_white_b
     circle_image = cv2.circle(imput_image_circle,(x,y),radius, color, thickness)
 
     # Displaying the image
-    cv2.imshow("Click inside red circle", circle_image)
-    c = cv2.waitKey()
+    # cv2.imshow("Click inside red circle", circle_image)
+    # c = cv2.waitKey()
     # match shapes: https://docs.opencv.org/4.x/d5/d45/tutorial_py_contours_more_functions.html#:~:text=OpenCV%20comes%20with%20a%20function,on%20the%20hu%2Dmoment%20values.
     ## --------- DONE ------------ ##
 
@@ -83,15 +83,16 @@ def geetest(target_object_image_path, select_panel_image_path, debug=False):
     print('target single contour shape: ', single_contour.shape)
     target_fps, select_panel_fps = feature_match(target_shape_white_black, input_white_black)
     select_panel_ct_center_pts = cal_center_pt(input_shape_contours)
-    contour_circle_radius=30
+    contour_circle_radius=35
 
     best_matched_contour_idx = tell_me_which_contour_has_most_feature_pts(select_panel_ct_center_pts,contour_circle_radius,select_panel_fps)
     best_matched_contour = input_shape_contours[best_matched_contour_idx]
 
     imput_image_circle = np.zeros((input_white_black.shape[0],input_white_black.shape[1], 3), dtype=np.uint8)
-    cv2.drawContours(imput_image_circle, input_shape_contours, -1, (0,255,0), 3)
-    draw_circle(imput_image_circle, select_panel_ct_center_pts, contour_circle_radius)
-    draw_circle(imput_image_circle, select_panel_fps, 5,(244,244,244), -1)
+    cv2.drawContours(imput_image_circle, input_shape_contours, -1, (255,0,0), 3)
+    draw_circle(imput_image_circle, select_panel_ct_center_pts[:best_matched_contour_idx]+select_panel_ct_center_pts[best_matched_contour_idx+1:], contour_circle_radius, color=[0,0,255])
+    draw_circle(imput_image_circle, [select_panel_ct_center_pts[best_matched_contour_idx]], contour_circle_radius, color=[0,255,0])
+    draw_circle(imput_image_circle, select_panel_fps, 2,(244,244,244), -1)
     # Displaying the image
     cv2.imshow("Circled panel", imput_image_circle)
     c = cv2.waitKey()
